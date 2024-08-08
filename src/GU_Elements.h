@@ -5,7 +5,7 @@
 
 #include <Arduino_GigaDisplay_GFX.h>
 #include <GestureDetector.h>
-#include "FontCollection.h"    // TODO make these < > when it's in a library
+#include <FontCollection.h>
 
 // ---------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ public:
   friend class GU_Menu;
 
   // If fc is NULL, nothing will be drawn, but the button will still pick up taps.
-  GU_Button(FontCollection *fc, GestureDetector *gd) 
+  GU_Button(FontCollection *fc, GestureDetector *gd)
             { _gd = gd; _fc = fc; _gfx = fc != NULL ? fc->_gfx : NULL; }
   ~GU_Button() {  }
 
@@ -49,12 +49,12 @@ public:
                     uint16_t textcolor, char *label,
                     uint8_t textsize,
                     TapCB callback = NULL, int indx = 0, void *param = NULL);
-  
-  // Destroy the button. 
+
+  // Destroy the button.
   void destroyButton(void);
 
   // Draw the button.
-  void drawButton(void); 
+  void drawButton(void);
 
   // Get the bounding rect of the button.
   void getButtonRect(int16_t *x, int16_t *y, uint16_t *w, uint16_t *h)
@@ -99,7 +99,7 @@ public:
   friend void menu_item_wrapper(EventType ev, int indx, void *param, int x, int y);
   friend void menu_cancel_wrapper(EventType ev, int indx, void *param, int x, int y);
 
-  GU_Menu(FontCollection *fc, GestureDetector *gd) 
+  GU_Menu(FontCollection *fc, GestureDetector *gd)
           { _gd = gd; _fc = fc; _gfx = fc->_gfx ;}
   ~GU_Menu() {  }
 
@@ -121,7 +121,7 @@ public:
   //              by dragging or tapping outside the menu area.
   // param        User param to pass to callback
 
-  void initMenu(GU_Button *button, 
+  void initMenu(GU_Button *button,
                 uint16_t outline, uint16_t fill,
                 uint16_t highlight, uint16_t textcolor,
                 TapCB callback, int indx, void *param = NULL);
@@ -173,9 +173,6 @@ private:
   void drawIfChanged(int item);
   int determineItem(int x, int y);
   void userCallbackAndCleanUp(int item, int x, int y);
-  uint16_t rgb565_average(uint16_t color1, uint16_t color2);
-  void rgb565_unpack(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue);
-  uint16_t rgb565_pack(uint8_t red, uint8_t green, uint8_t blue);
 };
 
 // Wrappers to alow member functions to be passed as pointers
@@ -236,5 +233,24 @@ private:
 // Wrappers
 void pager_swipe_wrapper(EventType ev, int indx, void *param, int x, int y, int dx, int dy);
 void dotsCB(EventType ev, int indx, void *param, int x, int y);
+
+// Useful colour stuff not belonging to any class in particular
+uint16_t rgb565_average(uint16_t color1, uint16_t color2);
+void rgb565_unpack(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue);
+uint16_t rgb565_pack(uint8_t red, uint8_t green, uint8_t blue);
+
+// Colours in RGB565.
+#define RGB565_PACK(red, green, blue) ((red & 0xF8) << 8) | ((green & 0xFC) << 3) | (blue >> 3)
+
+#define CYAN    (uint16_t)0x07FF
+#define RED     (uint16_t)0xf800
+#define BLUE    (uint16_t)0x001F
+#define GREEN   (uint16_t)0x07E0
+#define MAGENTA (uint16_t)0xF81F
+#define WHITE   (uint16_t)0xffff
+#define BLACK   (uint16_t)0x0000
+#define YELLOW  (uint16_t)0xFFE0
+#define GREY (uint16_t)RGB565_PACK(0x7F, 0x7F, 0x7F)
+#define DKGREY (uint16_t)RGB565_PACK(0x3F, 0x3F, 0x3F)
 
 #endif // def GU_ELEMENTS_H

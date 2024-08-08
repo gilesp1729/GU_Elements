@@ -98,29 +98,6 @@ void GU_Menu::checkMenuItem(int indx, bool checked)
   _items[indx].checked = checked;
 }
 
-// Pack and unpack a RGB565 color.
-void GU_Menu::rgb565_unpack(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue)
-{
-  *red = (color >> 8) & 0xF8;
-  *green = (color >> 3) & 0xFC;
-  *blue = (color << 3) & 0xF8;
-}
-
-uint16_t GU_Menu::rgb565_pack(uint8_t red, uint8_t green, uint8_t blue)
-{
-  return ((red & 0xF8) << 8) | ((green & 0xFC) << 3) | (blue >> 3);
-}
-
-// Take the average of two RGB565 colors.
-uint16_t GU_Menu::rgb565_average(uint16_t color1, uint16_t color2)
-{
-  uint8_t r1, g1, b1, r2, g2, b2;
-
-  rgb565_unpack(color1, &r1, &g1, &b1);
-  rgb565_unpack(color2, &r2, &g2, &b2);
-  return rgb565_pack((r1 + r2) / 2, (g1 + g2) / 2, (b1 + b2) / 2);
-}
-
 // Draw the menu with (optinoally) one item highlighted.
 void GU_Menu::drawMenu(int highlight_item)
 {
@@ -146,7 +123,7 @@ void GU_Menu::drawMenu(int highlight_item)
     if (_items[i].checked)
     {
       // Draw a tick mark
-      _fc->drawText((char)25, 
+      _fc->drawText((char)25,
                     _x1 + (_em_width / 2), item_y1 + (_itemheight / 2) - (h / 2) + (item_y1 - y),
                     color, _textsize);
     }
@@ -298,4 +275,28 @@ void menu_cancel_wrapper(EventType ev, int indx, void *param, int x, int y)
 
   menu->userCallbackAndCleanUp(-1, x, y);
 }
+
+// Pack and unpack a RGB565 color.
+void rgb565_unpack(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue)
+{
+  *red = (color >> 8) & 0xF8;
+  *green = (color >> 3) & 0xFC;
+  *blue = (color << 3) & 0xF8;
+}
+
+uint16_t rgb565_pack(uint8_t red, uint8_t green, uint8_t blue)
+{
+  return ((red & 0xF8) << 8) | ((green & 0xFC) << 3) | (blue >> 3);
+}
+
+// Take the average of two RGB565 colors.
+uint16_t rgb565_average(uint16_t color1, uint16_t color2)
+{
+  uint8_t r1, g1, b1, r2, g2, b2;
+
+  rgb565_unpack(color1, &r1, &g1, &b1);
+  rgb565_unpack(color2, &r2, &g2, &b2);
+  return rgb565_pack((r1 + r2) / 2, (g1 + g2) / 2, (b1 + b2) / 2);
+}
+
 

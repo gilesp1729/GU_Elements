@@ -4,21 +4,9 @@
 
 // Uses libraries:
 // GestureDetector for screen interaction
-// GU_Elements for UI elements 
+// GU_Elements for UI elements
 // Arduino_GigaDisplay_GFX for screen display
 // (and all their dependencies)
-
-// Colours in RGB565.
-#define CYAN    (uint16_t)0x07FF
-#define RED     (uint16_t)0xf800
-#define BLUE    (uint16_t)0x001F
-#define GREEN   (uint16_t)0x07E0
-#define MAGENTA (uint16_t)0xF81F
-#define WHITE   (uint16_t)0xffff
-#define BLACK   (uint16_t)0x0000
-#define YELLOW  (uint16_t)0xFFE0
-#define GREY (uint16_t)tft.color565(0x7F, 0x7F, 0x7F)
-#define DKGREY (uint16_t)tft.color565(0x3F, 0x3F, 0x3F)
 
 // Construct the graphics and gesture libs
 GestureDetector detector;
@@ -59,11 +47,11 @@ void tap_cb(EventType ev, int indx, void *param, int x, int y)
 {
   if ((ev & EV_RELEASED) == 0)
     return;   // we only act on the releases
-    
+
   refresh();
   if (ev & EV_LONG_PRESS)
     Log("Long pressed");
-  else    
+  else
     Log("Tapped");
 }
 
@@ -77,7 +65,7 @@ void menu_cb(EventType ev, int indx, void *param, int x, int y)
     Log(items[indx & 0xFF]);
 }
 
-void setup() 
+void setup()
 {
   Serial.begin(9600);
   while(!Serial) {}
@@ -94,7 +82,7 @@ void setup()
   tft.setRotation(1);
   detector.setRotation(1);
 
-  // Set up buttons. button 2 has no callback passed here, as the associated menu 
+  // Set up buttons. button 2 has no callback passed here, as the associated menu
   // will provide one internally.
   button1.initButtonUL(240, 5, 150, 45, BLACK, YELLOW, BLACK, "Button", tsize, tap_cb, 2, NULL);
   button2.initButtonUL(480, 5, 150, 45, WHITE, DKGREY, WHITE, "Menu", tsize);
