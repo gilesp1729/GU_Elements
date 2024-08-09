@@ -183,48 +183,46 @@ void menu_cancel_wrapper(EventType ev, int indx, void *param, int x, int y);
 
 // ---------------------------------------------------------------------------------
 
-// A class that allows multiple full-screen pages to be swiped between. A row of dots
-// is displayed at the bottom of each page, showing which one is currently
-// displayed. Swiping right/left or tapping the dots wll select diferent pages.
+// A class that allows multiple full-screen pages to be swiped between.
+// This basic version just clears screen between pages. It can be subclassed
+// to display various sorts of page/swipeable indicators. Two subclasses
+// (Pager and Sidebar) are given below.
 //
 // The callback is a DragCB whose index is passed as:
 // - page being hidden in high byte (or 0xFF if there isn't one)
 // - page being shown in low byte (or 0xFF if leaving the pager)
 // Since there is only one pager, no index is passed to init_pager()
 // (the real callback is hardcoded at MAX_EVENTS - 5)
-class GU_Pager
+class GU_BasicPager
 {
 public:
-  friend class GU_Button;
   friend void pager_swipe_wrapper(EventType ev, int indx, void *param, int x, int y, int dx, int dy);
-  friend void dotsCB(EventType ev, int indx, void *param, int x, int y);
 
-  GU_Pager(GigaDisplay_GFX *gfx, GestureDetector *gd) { _gfx = gfx; _gd = gd; }
-  ~GU_Pager() {  }
+  GU_BasicPager(GigaDisplay_GFX *gfx, GestureDetector *gd) { _gfx = gfx; _gd = gd; }
+  ~GU_BasicPager() {  }
 
   // Set up a pager to go from 0 to n_pages-1 pages. Clear screen to
-  // the fill color and display the first page.
+  // the fill color and display the given first page.
   void initPager(int n_pages, int first_page,
                 DragCB callback, void *param = NULL, uint16_t fillcolor = 0);
 
   // Take down the pager.
   void destroyPager(void);
 
-  // Clear the page to fillcolor. Optionally display the row of dots at bottom.
-  void clearPage(bool dots);
+  // Clear the page to fillcolor. Optionally display some sort of indicator
+  // that the page can be swiped. This might be dots at bottom (class Pager)
+  // or a swipe indicator line at left or right (class Sidebar). This basic version
+  // just clears the shole screen.
+  virtual void clearPage(bool indicator) { _gfx->fillScreen(_fillcolor); }
 
-private:
+protected:
   Adafruit_GFX *_gfx;
   GestureDetector *_gd;
-  GU_Button *_dots_button;
   int _num_pages = 1;
   int _curr_page = 0;
   DragCB _callback;
   void *_param;
   uint16_t _fillcolor;
-
-  // Display the row of dots at bottom of screen with the current page highlighted.
-  void displayDots(bool dots);
 
   // Callback functons
   void pager_swipe_cb(EventType ev, int indx, void *param, int x, int y, int dx, int dy);
@@ -234,7 +232,64 @@ private:
 void pager_swipe_wrapper(EventType ev, int indx, void *param, int x, int y, int dx, int dy);
 void dotsCB(EventType ev, int indx, void *param, int x, int y);
 
+
+// ---------------------------------------------------------------------------------
+
+// The Pager class allows swiping between full-page images. A row of dots
+// is displayed at the bottom of each page, showing which one is currently
+// displayed. Swiping right/left or tapping the dots wll select diferent pages.
+
+class GU_Pager : public GU_BasicPager
+{
+public:
+  friend class GU_Button;
+  friend void dotsCB(EventType ev, int indx, void *param, int x, int y);
+
+  //GU_Pager(GigaDisplay_GFX *gfx, GestureDetector *gd) { _gfx = gfx; _gd = gd; }
+  GU_Pager(GigaDisplay_GFX *gfx, GestureDetector *gd) : GU_BasicPager(gfx, gd) { }
+  ~GU_Pager() {  }
+
+  // Set up a pager to go from 0 to n_pages-1 pages. Clear screen to
+  // the fill color and display the given first page.
+  void initPager(int n_pages, int first_page,
+                DragCB callback, void *param = NULL, uint16_t fillcolor = 0);
+
+  // This clearPage overrides the basic clearPage to display the dots.
+  void clearPage(bool indicator);
+
+private:
+  // Display the row of dots at bottom of screen with the current page highlighted.
+  void displayDots(bool dots);
+
+  GU_Button *_dots_button;
+};
+
+// Wrappers
+void dotsCB(EventType ev, int indx, void *param, int x, int y);
+
+#if 0
+// ---------------------------------------------------------------------------------
+
+// The Sidebar class is similar to a Pager, but allows for the sidebars (pages other
+// than the initial page) to be less than full width. There is typically only one
+// sidebar in addition to the main page, but there can be many.
+// The sidebars are indicated by a swipe indicator line rather than a row of dots.
+class GU_Sidebar : public GU_BasicPager
+{
+public:
+ // GU_Sidebar(GigaDisplay_GFX *gfx, GestureDetector *gd) { _gfx = gfx; _gd = gd; }
+ // ~GU_Sidebar() {  }
+
+  // TODO: implement the rest of this.
+
+};
+#endif
+
+
+// ---------------------------------------------------------------------------------
+
 // Useful colour stuff not belonging to any class in particular
+
 uint16_t rgb565_average(uint16_t color1, uint16_t color2);
 void rgb565_unpack(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue);
 uint16_t rgb565_pack(uint8_t red, uint8_t green, uint8_t blue);
