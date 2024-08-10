@@ -203,6 +203,12 @@ public:
 
   // Set up a pager to go from 0 to n_pages-1 pages. Clear screen to
   // the fill color and display the given first page.
+
+  // n_pages      Total number of pages.
+  // first_page   The page to display first (0 to n_pages-1)
+  // callback     Drag callback function to receive swipes.
+  // param        User param to pass to callback.
+  // fillcolor    Color to clear screens to (default 0)
   void initPager(int n_pages, int first_page,
                 DragCB callback, void *param = NULL, uint16_t fillcolor = 0);
 
@@ -214,6 +220,9 @@ public:
   // or a swipe indicator line at left or right (class Sidebar). This basic version
   // just clears the shole screen.
   virtual void clearPage(bool indicator) { _gfx->fillScreen(_fillcolor); }
+
+  // Go to a given page.
+  void gotoPage(int page);
 
 protected:
   Adafruit_GFX *_gfx;
@@ -251,6 +260,12 @@ public:
 
   // Set up a pager to go from 0 to n_pages-1 pages. Clear screen to
   // the fill color and display the given first page.
+
+  // n_pages      Total number of pages.
+  // first_page   The page to display first (0 to n_pages-1)
+  // callback     Drag callback function to receive swipes.
+  // param        User param to pass to callback.
+  // fillcolor    Color to clear screens to (default 0)
   void initPager(int n_pages, int first_page,
                 DragCB callback, void *param = NULL, uint16_t fillcolor = 0);
 
@@ -261,29 +276,53 @@ private:
   // Display the row of dots at bottom of screen with the current page highlighted.
   void displayDots(bool dots);
 
+  // Points to the button overlaying the row of dots.
   GU_Button *_dots_button;
 };
 
 // Wrappers
 void dotsCB(EventType ev, int indx, void *param, int x, int y);
 
-#if 0
 // ---------------------------------------------------------------------------------
 
 // The Sidebar class is similar to a Pager, but allows for the sidebars (pages other
 // than the initial page) to be less than full width. There is typically only one
 // sidebar in addition to the main page, but there can be many.
-// The sidebars are indicated by a swipe indicator line rather than a row of dots.
+// The presence of a sidebar is indicated by a swipe indicator line.
+
+// TODO: A button covers the rest of the underlying page, allowing the sidebar to
+// be cancelled.
 class GU_Sidebar : public GU_BasicPager
 {
 public:
- // GU_Sidebar(GigaDisplay_GFX *gfx, GestureDetector *gd) { _gfx = gfx; _gd = gd; }
- // ~GU_Sidebar() {  }
+  GU_Sidebar(GigaDisplay_GFX *gfx, GestureDetector *gd) : GU_BasicPager(gfx, gd) { }
+  ~GU_Sidebar() {  }
 
-  // TODO: implement the rest of this.
+  // Set up a pager to go from 0 to n_pages-1 pages. Clear screen to
+  // the fill color and display the given first page at full screen.
 
+  // n_pages      Total number of pages.
+  // first_page   The page to display first (0 to n_pages-1)
+  // sidewidth    The width of the sidebars.
+  // sidecolor    Color to fill sidebars.
+  // sideborder   Color to outline sidebars. This is also the color
+  //              used for the swipe indicator.
+  // callback     Drag callback function to receive swipes.
+  // param        User param to pass to callback.
+  // fillcolor    Color to clear main page to (default 0)
+  void initSidebar(int n_pages, int first_page,
+                  uint16_t sidewidth, uint16_t sidecolor, uint16_t sideborder,
+                  DragCB callback, void *param = NULL, uint16_t fillcolor = 0);
+
+  // This clearPage overrides the basic clearPage to display the swipe indicator.
+  void clearPage(bool indicator);
+
+private:
+  int first_page;
+  uint16_t sidewidth;
+  uint16_t sidecolor;
+  uint16_t sideborder;
 };
-#endif
 
 
 // ---------------------------------------------------------------------------------
