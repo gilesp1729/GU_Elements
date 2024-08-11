@@ -28,8 +28,8 @@ GU_Button button2(&fc, &detector);
 GU_Menu menu(&fc, &detector);
 char *items[3] = { "An item", "Another item", "A long item name" };
 
-// A pager with 3 pages. The above buttons and menu are on Page 0.
-GU_Pager pager(&tft, &detector);
+// A sidebar pager with 4 pages. The above buttons and menu are on Page 1.
+GU_Sidebar pager(&tft, &detector);
 
 void Log(char *str, int x = 50, int y = 200)
 {
@@ -80,12 +80,14 @@ void pager_swipe_cb(EventType ev, int indx, void *param, int x, int y, int dx, i
   switch (old_page)
   {
   case 0:
+    break;
+  case 1:
     button1.destroyButton();
     menu.destroyMenu();   // button2 will be destroyed with its menu
     break;
-  case 1:
-    break;
   case 2:
+    break;
+  case 3:
     break;
   }
 
@@ -93,6 +95,11 @@ void pager_swipe_cb(EventType ev, int indx, void *param, int x, int y, int dx, i
   switch (new_page)
   {
   case 0:
+  // Nothing on this left-hand sidebar at present.
+    Log("Page 0", 50, 300);
+    break;
+  case 1:
+    // Main page.
     // Set up buttons. button 2 has no callback passed here, as the associated menu
     // will provide one internally.
     button1.initButtonUL(240, 5, 150, 45, BLACK, YELLOW, BLACK, "Button", tsize, tap_cb, 2, NULL);
@@ -108,14 +115,14 @@ void pager_swipe_cb(EventType ev, int indx, void *param, int x, int y, int dx, i
     // Draw buttons
     button1.drawButton();
     button2.drawButton();
-    Log("Page 0", 50, 300);
-    break;
-  case 1:
-  // The other pages have nothing on them at present.
     Log("Page 1", 50, 300);
     break;
   case 2:
-    Log("Page 2", 50, 300);
+  // The other pages have nothing on them at present. They are right-hand sidebars.
+    Log("Page 2", 650, 300);
+    break;
+  case 3:
+    Log("Page 3", 650, 300);
     break;
   }
 }
@@ -137,9 +144,9 @@ void setup()
   tft.setRotation(1);
   detector.setRotation(1);
 
-  // Init the pager to show Page 0 of 3 pages. The callback is responsible
-  // for drawing the pages as they are shown and hidden by swiping.
-  pager.initPager(3, 0, pager_swipe_cb, NULL, BLACK);
+  // Init the sidebar pager to show Page 1 of 4 pages. There will be
+  // one sidebar on the left (Page 0) and two on the right.
+  pager.initSidebar(4, 1, 320, DKGREY, WHITE, pager_swipe_cb, NULL, BLACK);
 }
 
 void loop() {

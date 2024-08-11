@@ -160,15 +160,15 @@ void GU_Pager::displayDots(bool dots)
 
 void GU_Sidebar::initSidebar(int n_pages, int first_page,
                             uint16_t sidewidth, uint16_t sidecolor, uint16_t sideborder,
-                            DragCB callback, void *param = NULL, uint16_t fillcolor = 0)
+                            DragCB callback, void *param, uint16_t fillcolor)
 {
   // Button used for selecting pages by tapping dots.
-  static GU_Button cancel_button(NULL, _gd);
-  _cancel_button = &cancel_button;
+  //static GU_Button cancel_button(NULL, _gd);
+  //_cancel_button = &cancel_button;
 
   _main_page = first_page;
   _sidewidth = sidewidth;
-  _sideolor = sidecolor;
+  _sidecolor = sidecolor;
   _sideborder = sideborder;
 
   GU_BasicPager::initPager(n_pages, first_page, callback, param, fillcolor);
@@ -176,7 +176,7 @@ void GU_Sidebar::initSidebar(int n_pages, int first_page,
 
 // Clear the page to fillcolor (if the main screen) or sidecolor.
 // If there is an indicator to display, show it.
-void GU_Pager::clearPage(bool indicator)
+void GU_Sidebar::clearPage(bool indicator)
 {
   int bar_w = 3;
   int bar_h = _gfx->height() / 3;
@@ -188,28 +188,28 @@ void GU_Pager::clearPage(bool indicator)
     // There is no cancel button.
     _gfx->fillScreen(_fillcolor);
     if (_curr_page > 0 && indicator)
-        _gfx->fillRect(5, bar_h, 3, bar_h, sideborder);
+        _gfx->fillRect(5, bar_h, 3, bar_h, _sideborder);
     if (_curr_page < _num_pages - 1 && indicator)
-        _gfx->fillRect(_gfx->width - 8, bar_h, 3, bar_h, sideborder);
+        _gfx->fillRect(_gfx->width() - 8, bar_h, 3, bar_h, _sideborder);
   }
   else if (_curr_page < _main_page)
   {
     // We're in a sidebar on the left. Fill and outline it.
     // Display indicator on left if there are more sidebars to the left.
     // The remaining screen space to the right becomes the cancel button.
-    _gfx->fillRect(0, 0, _sidewidth, _gfx->height(), sidecolor);
-    _gfx->drawRect(0, 0, _sidewidth, _gfx->height(), sideborder);
+    _gfx->fillRect(0, 0, _sidewidth, _gfx->height(), _sidecolor);
+    _gfx->drawRect(0, 0, _sidewidth, _gfx->height(), _sideborder);
     if (_curr_page > 0 && indicator)
-        _gfx->fillRect(5, bar_h, 3, bar_h, sideborder);
+        _gfx->fillRect(5, bar_h, 3, bar_h, _sideborder);
   }
   else if (_curr_page >_main_page)
   {
     // We're in a sidebar on the right. Fill and outline it.
     // Display indicator on right if there are more sidebars to the right.
     // The remaining screen space to the left becomes the cancel button.
-    _gfx->fillRect(_gfx->width() - _sidewidth - 1, 0, _sidewidth, _gfx->height(), sidecolor);
-    _gfx->drawRect(_gfx->width() - _sidewidth - 1, 0, _sidewidth, _gfx->height(), sideborder);
+    _gfx->fillRect(_gfx->width() - _sidewidth - 1, 0, _sidewidth, _gfx->height(), _sidecolor);
+    _gfx->drawRect(_gfx->width() - _sidewidth - 1, 0, _sidewidth, _gfx->height(), _sideborder);
     if (_curr_page < _num_pages - 1 && indicator)
-        _gfx->fillRect(_gfx->width - 8, bar_h, 3, bar_h, sideborder);
+        _gfx->fillRect(_gfx->width() - 8, bar_h, 3, bar_h, _sideborder);
   }
 }

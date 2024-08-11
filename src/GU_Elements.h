@@ -318,10 +318,10 @@ public:
   void clearPage(bool indicator);
 
 private:
-  int first_page;
-  uint16_t sidewidth;
-  uint16_t sidecolor;
-  uint16_t sideborder;
+  int _main_page;
+  uint16_t _sidewidth;
+  uint16_t _sidecolor;
+  uint16_t _sideborder;
 };
 
 
