@@ -144,7 +144,10 @@ void GU_Pager::displayDots(bool dots)
       x += dotsize + spacing;
     }
   }
-  else
+  else(x - radius, y - radius,
+                            _num_pages * (dotsize + spacing), dotsize + spacing,
+                            0, 0, 0, "\0", 1,
+                            dotsCB, MAX_EVENTS - 6, (void *)this);
   {
     // Cancel the button, since there are no dots.
   _gd->cancelEvent(MAX_EVENTS - 6);
@@ -163,8 +166,8 @@ void GU_Sidebar::initSidebar(int n_pages, int first_page,
                             DragCB callback, void *param, uint16_t fillcolor)
 {
   // Button used for selecting pages by tapping dots.
-  //static GU_Button cancel_button(NULL, _gd);
-  //_cancel_button = &cancel_button;
+  static GU_Button cancel_button(NULL, _gd);
+  _cancel_button = &cancel_button;
 
   _main_page = first_page;
   _sidewidth = sidewidth;
@@ -191,6 +194,7 @@ void GU_Sidebar::clearPage(bool indicator)
         _gfx->fillRect(5, bar_h, 3, bar_h, _sideborder);
     if (_curr_page < _num_pages - 1 && indicator)
         _gfx->fillRect(_gfx->width() - 8, bar_h, 3, bar_h, _sideborder);
+    _gd->cancelEvent(MAX_EVENTS - 6);
   }
   else if (_curr_page < _main_page)
   {
@@ -201,6 +205,10 @@ void GU_Sidebar::clearPage(bool indicator)
     _gfx->drawRect(0, 0, _sidewidth, _gfx->height(), _sideborder);
     if (_curr_page > 0 && indicator)
         _gfx->fillRect(5, bar_h, 3, bar_h, _sideborder);
+    _cancel_button->initButtonUL(_sidewidth, 0,
+                            _gfx->width() - _sidewidth - 1, _gfx->height(),
+                            0, 0, 0, "\0", 1,
+                            cancelCB, MAX_EVENTS - 6, (void *)this);
   }
   else if (_curr_page >_main_page)
   {
@@ -211,5 +219,22 @@ void GU_Sidebar::clearPage(bool indicator)
     _gfx->drawRect(_gfx->width() - _sidewidth - 1, 0, _sidewidth, _gfx->height(), _sideborder);
     if (_curr_page < _num_pages - 1 && indicator)
         _gfx->fillRect(_gfx->width() - 8, bar_h, 3, bar_h, _sideborder);
+    _cancel_button->initButtonUL(0, 0,
+                            _gfx->width() - _sidewidth - 1, _gfx->height(),
+                            0, 0, 0, "\0", 1,
+                            cancelCB, MAX_EVENTS - 6, (void *)this);
   }
+
+  // If we're leaving the pager altogether, make sure that button
+  // gets canceled.
+  if (!indicator)
+    _gd->cancelEvent(MAX_EVENTS - 6);
+}
+
+// Cancel button callback. Return to the main page.
+void cancelCB(EventType ev, int indx, void *param, int x, int y)
+{
+  GU_Sidebar *pager = (GU_Sidebar *)param;
+
+  pager->gotoPage(pager->_main_page);
 }

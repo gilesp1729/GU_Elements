@@ -146,6 +146,7 @@ void setup()
 
   // Init the sidebar pager to show Page 1 of 4 pages. There will be
   // one sidebar on the left (Page 0) and two on the right.
+  // (Typically we only need one sidebar, but more are possible.)
   pager.initSidebar(4, 1, 320, DKGREY, WHITE, pager_swipe_cb, NULL, BLACK);
 }
 

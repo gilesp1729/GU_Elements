@@ -251,7 +251,6 @@ void dotsCB(EventType ev, int indx, void *param, int x, int y);
 class GU_Pager : public GU_BasicPager
 {
 public:
-  friend class GU_Button;
   friend void dotsCB(EventType ev, int indx, void *param, int x, int y);
 
   //GU_Pager(GigaDisplay_GFX *gfx, GestureDetector *gd) { _gfx = gfx; _gd = gd; }
@@ -290,11 +289,12 @@ void dotsCB(EventType ev, int indx, void *param, int x, int y);
 // sidebar in addition to the main page, but there can be many.
 // The presence of a sidebar is indicated by a swipe indicator line.
 
-// TODO: A button covers the rest of the underlying page, allowing the sidebar to
+// A button covers the rest of the underlying page, allowing the sidebar to
 // be cancelled.
 class GU_Sidebar : public GU_BasicPager
 {
 public:
+  friend void cancelCB(EventType ev, int indx, void *param, int x, int y);
   GU_Sidebar(GigaDisplay_GFX *gfx, GestureDetector *gd) : GU_BasicPager(gfx, gd) { }
   ~GU_Sidebar() {  }
 
@@ -318,11 +318,14 @@ public:
   void clearPage(bool indicator);
 
 private:
+  GU_Button *_cancel_button;
   int _main_page;
   uint16_t _sidewidth;
   uint16_t _sidecolor;
   uint16_t _sideborder;
 };
+
+void cancelCB(EventType ev, int indx, void *param, int x, int y);
 
 
 // ---------------------------------------------------------------------------------
