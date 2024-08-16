@@ -56,6 +56,9 @@ public:
   // Draw the button.
   void drawButton(void);
 
+  // Set the text label of the button
+  void setText(char *label);
+
   // Get the bounding rect of the button.
   void getButtonRect(int16_t *x, int16_t *y, uint16_t *w, uint16_t *h)
   {
@@ -137,6 +140,9 @@ public:
 
   // Set the checkbox in a menu item.
   void checkMenuItem(int indx, bool checked);
+
+  // Ae we displaying a menu? (any menu, not just this instance)
+  bool isAnyMenuDisplayed(void) { return _gd->isEventRegistered(MAX_EVENTS - 4); }
 
 private:
   typedef struct GU_MenuItem

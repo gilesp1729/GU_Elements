@@ -5,7 +5,7 @@
 void GU_Button::initButtonUL(int16_t x1, int16_t y1, uint16_t w, uint16_t h,
                             uint16_t outline, uint16_t fill,
                             uint16_t textcolor, char *label,
-                            uint8_t textsize, 
+                            uint8_t textsize,
                             TapCB callback, int indx, void *param)
 
 {
@@ -22,10 +22,10 @@ void GU_Button::initButtonUL(int16_t x1, int16_t y1, uint16_t w, uint16_t h,
                 // When 'label' is >9 characters, _label is not terminated.
   _indx = indx;
   if (callback != NULL)
-    _gd->onTap(_x1, _y1, _w, _h, callback, indx, param); 
+    _gd->onTap(_x1, _y1, _w, _h, callback, indx, param);
   else
     // We expect a menu to be triggered by this button, and will call its callback instead
-    _is_menu = true;  
+    _is_menu = true;
 }
 
 // Destroy the button.
@@ -36,7 +36,7 @@ void GU_Button::destroyButton(void)
 }
 
 // Draw a button.
-void GU_Button::drawButton(void) 
+void GU_Button::drawButton(void)
 {
   int16_t x, y;
   uint16_t w, h;
@@ -62,8 +62,8 @@ void GU_Button::drawButton(void)
   //_gfx->setCursor(_x1 + (_w / 2) - (strlen(_label) * 3 * _textsize_x),
   //                _y1 + (_h / 2) - (4 * _textsize_y));
 
-  _fc->getTextBounds(_label, _x1, _y1, &x, &y, &w, &h, _textsize); 
-#if 0    
+  _fc->getTextBounds(_label, _x1, _y1, &x, &y, &w, &h, _textsize);
+#if 0
   {
     char buf[64];
     sprintf(buf, "x/y %d %d xywh %d %d %d %d", _x1, _y1, x, y, w, h);
@@ -76,3 +76,9 @@ void GU_Button::drawButton(void)
   _fc->drawText(_label, _x1 + (_w / 2) - (w / 2), _y1 + (_h / 2) - (h / 2) + (_y1 - y), _textcolor, _textsize);
 }
 
+void GU_Button::setText(char *label)
+{
+  strncpy(_label, label, 9);
+  _label[9] = 0; // strncpy does not place a null at the end.
+  drawButton();
+}
