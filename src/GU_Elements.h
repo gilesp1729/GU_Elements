@@ -163,7 +163,10 @@ private:
   uint16_t _outlinecolor, _fillcolor, _highlightcolor, _textcolor, _disabledtext;
   GU_Button *_button;    // the associated button
   GU_MenuItem _items[MAX_ITEMS];
-  int _n_items;
+  int _n_items;         // total number of items in the menu
+  int _n_displayed;     // number actually displayed (if there isn't room for all of them)
+  int _first_displayed; // index of top displayed item in menu
+  int _max_displayed;    // the max number of items that can be displayed within screen height
   TapCB _callback;
   int _indx;
   void *_param;

@@ -21,6 +21,8 @@ void GU_Menu::initMenu(GU_Button *button,
   _x1 = _button->_x1; // may change if too close to edge of screen
   _y1 = _button->_y1 + _button->_h;
   _n_items = 0;
+  _n_displayed = 0;
+  _first_displayed = 0;
   _callback = callback;
   _indx = indx;
   _param = param;
@@ -29,6 +31,7 @@ void GU_Menu::initMenu(GU_Button *button,
   // crowding based on the font.
   _fc->getTextBounds("M", 0, 0, &x, &y, &_em_width, &_em_height, _textsize);
   _itemheight = max(_button->_h, 2 * _em_height);
+  _max_displayed = (_gfx->height() - _y1) / _itemheight;
 }
 
 // Set up a menu item at the given index (zero based) within the menu.
@@ -42,6 +45,8 @@ void GU_Menu::setMenuItem(int indx, char *itemText, bool enabled, bool checked)
 
   if (indx >= _n_items)
     _n_items = indx + 1;
+  if (_n_items <= _max_displayed)
+    _n_displayed = _n_items;
 
   _items[indx].enabled = enabled;
   _items[indx].checked = checked;
@@ -98,15 +103,15 @@ void GU_Menu::checkMenuItem(int indx, bool checked)
   _items[indx].checked = checked;
 }
 
-// Draw the menu with (optinoally) one item highlighted.
+// Draw the menu with (optionally) one item highlighted.
 void GU_Menu::drawMenu(int highlight_item)
 {
   int16_t x, y;
   uint16_t w, h, color;
-  int16_t item_y1;
+  int16_t item_y1, item_text_y;
 
   item_y1 = _y1;
-  for (int i = 0; i < _n_items; i++)
+  for (int i = _first_displayed; i < _first_displayed + _n_displayed; i++)
   {
     if (i == highlight_item)
       _gfx->fillRect(_x1, item_y1, _w, _itemheight, _highlightcolor);
@@ -119,18 +124,28 @@ void GU_Menu::drawMenu(int highlight_item)
       color = _disabledtext;
     _fc->getTextBounds(_items[i].label, _x1, item_y1, &x, &y, &w, &h, _textsize);
 
-    // X placement allows for checkmarks, Y placement is as for button with font adjustment
-    if (_items[i].checked)
+    // X placement allows for checkmarks, Y placement is as for button with font adjustment.
+    item_text_y = item_y1 + (_itemheight / 2) - (h / 2) + (item_y1 - y);
+
+    // If there are more items before the beginning or after the end,
+    // put in a little arrow indicator (instead of any check mark)
+    if (i == _first_displayed && _first_displayed > 0)
+    {
+      // Draw a solid up arrow
+      _fc->drawText((char)13, _x1 + (_em_width / 2), item_text_y, color, _textsize);
+    }
+    else if (i == _first_displayed + _n_displayed - 1 && i < _n_items - 1)
+    {
+      // Draw a solid down arrow
+      _fc->drawText((char)14, _x1 + (_em_width / 2), item_text_y, color, _textsize);
+    }
+    else if (_items[i].checked)
     {
       // Draw a tick mark
-      _fc->drawText((char)25,
-                    _x1 + (_em_width / 2), item_y1 + (_itemheight / 2) - (h / 2) + (item_y1 - y),
-                    color, _textsize);
+      _fc->drawText((char)25, _x1 + (_em_width / 2), item_text_y, color, _textsize);
     }
 
-    _fc->drawText(_items[i].label,
-                _x1 + 2 * _em_width, item_y1 + (_itemheight / 2) - (h / 2) + (item_y1 - y),
-                color, _textsize);
+    _fc->drawText(_items[i].label, _x1 + 2 * _em_width, item_text_y, color, _textsize);
 
 #if 0
     Serial.print(_x1);
@@ -170,7 +185,26 @@ int GU_Menu::determineItem(int x, int y)
     return -1;
 
   // Check to make sure we aren't right on the bottom line
-  i = min((int)(y - _y1) / _itemheight, _n_items - 1);
+  i = min((int)(y - _y1) / _itemheight, _n_displayed - 1) + _first_displayed;
+
+  // If we spend time in the first (or last) item, and there is more to
+  // display in that direction, alter _first_displayed to suit (this will
+  // cause the menu to be scrolled).
+  if (1)  // TODO put a time delay in here
+  {
+    if (i == _first_displayed && _first_displayed > 0)
+    {
+      _first_displayed--;
+      i--;
+    }
+    else if (i == _first_displayed + _n_displayed - 1 && i < _n_items - 1)
+    {
+      _first_displayed++;
+      i++;
+    }
+  }
+
+  // If the item is enabled, return its index
   if (_items[i].enabled)
     return i;
 
@@ -239,7 +273,7 @@ void menu_tap_wrapper(EventType ev, int indx, void *param, int x, int y)
   menu->menu_tap_cb(ev, indx, param, x, y);
 }
 
-// Handle a tap on a menu item. Return the selection when released.
+// Handle a tap on (or a drag into) a menu item. Return the selection when released.
 void menu_item_wrapper(EventType ev, int indx, void *param, int x, int y)
 {
   GU_Menu *menu = (GU_Menu *)param;
