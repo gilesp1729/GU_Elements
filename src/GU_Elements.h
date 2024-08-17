@@ -172,6 +172,7 @@ private:
   void *_param;
   uint16_t _em_width, _em_height;
   int _curr_item = -1;
+  long _start_millis = 0; // counter timer for dwelling on a menu item
 
   // Callback functons that assist with drawing the menu
   void menu_tap_cb(EventType ev, int indx, void *param, int x, int y);

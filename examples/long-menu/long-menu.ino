@@ -20,7 +20,8 @@ FontCollection fc(&tft, &FreeSans18pt7b, &UISymbolSans18pt7b, 1, 1);
 // Text size multiplier for buttons and menus
 const int tsize = 1;
 
-// A button with its associated menu
+// A button with its associated menu. This menu is longer than will
+// fit on the screen, to demonstrate menu scrolling when dragged through.
 GU_Button button2(&fc, &detector);
 GU_Menu menu(&fc, &detector);
 char *items[10] = { "An item", "Another item", "A long item name",

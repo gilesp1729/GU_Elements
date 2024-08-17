@@ -113,7 +113,7 @@ void GU_Menu::drawMenu(int highlight_item)
   item_y1 = _y1;
   for (int i = _first_displayed; i < _first_displayed + _n_displayed; i++)
   {
-    if (i == highlight_item)
+    if (i == highlight_item && _items[i].enabled)
       _gfx->fillRect(_x1, item_y1, _w, _itemheight, _highlightcolor);
     else
       _gfx->fillRect(_x1, item_y1, _w, _itemheight, _fillcolor);
@@ -131,13 +131,13 @@ void GU_Menu::drawMenu(int highlight_item)
     // put in a little arrow indicator (instead of any check mark)
     if (i == _first_displayed && _first_displayed > 0)
     {
-      // Draw a solid up arrow
-      _fc->drawText((char)13, _x1 + (_em_width / 2), item_text_y, color, _textsize);
+      // Draw a solid up arrow. Use text color even if disabled.
+      _fc->drawText((char)13, _x1 + (_em_width / 2), item_text_y, _textcolor, _textsize);
     }
     else if (i == _first_displayed + _n_displayed - 1 && i < _n_items - 1)
     {
       // Draw a solid down arrow
-      _fc->drawText((char)14, _x1 + (_em_width / 2), item_text_y, color, _textsize);
+      _fc->drawText((char)14, _x1 + (_em_width / 2), item_text_y, _textcolor, _textsize);
     }
     else if (_items[i].checked)
     {
@@ -187,10 +187,14 @@ int GU_Menu::determineItem(int x, int y)
   // Check to make sure we aren't right on the bottom line
   i = min((int)(y - _y1) / _itemheight, _n_displayed - 1) + _first_displayed;
 
+  // See how long we are hanging around in any one item.
+  if (i != _curr_item)
+    _start_millis = millis();
+
   // If we spend time in the first (or last) item, and there is more to
   // display in that direction, alter _first_displayed to suit (this will
   // cause the menu to be scrolled).
-  if (1)  // TODO put a time delay in here
+  if (millis() - _start_millis > 500)
   {
     if (i == _first_displayed && _first_displayed > 0)
     {
@@ -204,16 +208,17 @@ int GU_Menu::determineItem(int x, int y)
     }
   }
 
-  // If the item is enabled, return its index
-  if (_items[i].enabled)
-    return i;
-
-  return -1;  // disabled item
+  return i;
 }
 
 // Call user's callback function and clean up internal tap and drag events.
 void GU_Menu::userCallbackAndCleanUp(int item, int x, int y)
 {
+  // If not enabled, return -1. Defer this check till now so curr_item
+  // remaind valid to help with scrolling.
+  if (!_items[item].enabled)
+    item = -1;
+
   // Call user's calback with user's supplied index and param.
   // The user's index in the high byte, the menu item index in the low byte.
   // the x/y are not important but need to be passed anyway.
@@ -245,6 +250,7 @@ void GU_Menu::menu_tap_cb(EventType ev, int indx, void *param, int xtap, int yta
     return;
 
   _curr_item = -1;    // nothing is selected yet
+  _first_displayed = 0;
   drawMenu(-1);
 
   // Set a drag on the button to allow highlighting when dragged down into the menu.
