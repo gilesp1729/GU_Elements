@@ -180,6 +180,7 @@ private:
   // Callback functons that assist with drawing the menu
   void menu_tap_cb(EventType ev, int indx, void *param, int x, int y);
   void menu_drag_cb(EventType ev, int indx, void *param, int x, int y, int dx, int dy);
+  void menu_item_cb(EventType ev, int indx, void *param, int x, int y);
 
   // Menu drawing and navigation
   void drawMenu(int highlight_item);

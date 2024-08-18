@@ -279,13 +279,20 @@ void menu_tap_wrapper(EventType ev, int indx, void *param, int x, int y)
   menu->menu_tap_cb(ev, indx, param, x, y);
 }
 
-// Handle a tap on (or a drag into) a menu item. Return the selection when released.
 void menu_item_wrapper(EventType ev, int indx, void *param, int x, int y)
 {
   GU_Menu *menu = (GU_Menu *)param;
-  int item;
 
-  item = menu->determineItem(x, y);
+  menu->menu_item_cb(ev, indx, param, x, y);
+}
+
+// Handle a tap on (or a drag into) a menu item. Return the selection when released.
+void GU_Menu::menu_item_cb(EventType ev, int indx, void *param, int x, int y)
+{
+  int item;
+  bool scrolled = false;
+
+  item = determineItem(x, y);
 #if 0
   Serial.print("Menu item ");
   Serial.print(item);
@@ -294,10 +301,28 @@ void menu_item_wrapper(EventType ev, int indx, void *param, int x, int y)
   Serial.print(" ");
   Serial.println(y);
 #endif
-  if (ev & EV_RELEASED)
-    menu->userCallbackAndCleanUp(menu->_curr_item, x, y);
+
+  // If we've tapped in the little scrolling arrow, scroll the menu.
+  if ((ev & ~EV_RELEASED) == EV_TAP && x - _x1 < 2 * _em_width)
+  {
+    if (item == _first_displayed && _first_displayed > 0)
+    {
+      _first_displayed--;
+      item--;
+      scrolled = true;
+    }
+    else if (item == _first_displayed + _n_displayed - 1 && item < _n_items - 1)
+    {
+      _first_displayed++;
+      item++;
+      scrolled = true;
+    }
+  }
+
+  if ((ev & EV_RELEASED) && !scrolled)
+    userCallbackAndCleanUp(_curr_item, x, y);
   else
-    menu->drawIfChanged(item);
+    drawIfChanged(item);
 }
 
 // Handle a drag, starting in either the menu or its associated button,
