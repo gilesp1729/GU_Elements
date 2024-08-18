@@ -59,6 +59,9 @@ public:
   // Set the text label of the button
   void setText(char *label);
 
+  // Set the colors used by a button
+  void setColor(uint16_t outline, uint16_t fill, uint16_t textcolor);
+
   // Get the bounding rect of the button.
   void getButtonRect(int16_t *x, int16_t *y, uint16_t *w, uint16_t *h)
   {

@@ -82,3 +82,11 @@ void GU_Button::setText(char *label)
   _label[9] = 0; // strncpy does not place a null at the end.
   drawButton();
 }
+
+void GU_Button::setColor(uint16_t outline, uint16_t fill, uint16_t textcolor)
+{
+  _outlinecolor = outline;
+  _fillcolor = fill;
+  _textcolor = textcolor;
+  drawButton();
+}
