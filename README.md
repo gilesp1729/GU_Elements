@@ -25,14 +25,10 @@ the page being left, and the page being displayed. The caller must write code to
 - clear and remove sensitive aeas from the page being left, and
 - draw content and UI elements on the page being displayed.
 
-# Sidebar (coming soon)
+# Sidebar
 This is like the pager but only the initial page is full-screen. Subsequent page(s) may
 be narrower and are used for a slide-out sidebar. A swipe indicator line is displayed on the
 side having a sidebar available.
-
-# Keyboard (coming later)
-A full keyboard with some way (TBD) to pass the typed string back to the caller. Possibly a
-simpler numeric keyboard too.
 
 Dependencies:
 - Gesture detector library (gilesp1729/GestureDetector)
@@ -41,5 +37,5 @@ Dependencies:
 - Giga touch library
 
 Works in progress:
-- slide-out sidebar (like pager, but not covering the full screen)
 - keyboard
+- progress bars and sliders
