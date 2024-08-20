@@ -30,11 +30,14 @@ This is like the pager but only the initial page is full-screen. Subsequent page
 be narrower and are used for a slide-out sidebar. A swipe indicator line is displayed on the
 side having a sidebar available.
 
+Example programs given for buttons, menus, pagers and sidebars. A more complex example,
+exercising GU_Elements and GestureDetector, is at gilesp1729/Gigascope-R1.
+
 Dependencies:
 - Gesture detector library (gilesp1729/GestureDetector)
 - Font collection library (gilesp1729/FontCollection)
-- Giga GFX library
-- Giga touch library
+- Giga GFX library (arduino-libraries/Arduino_GigaDisplay_GFX)
+- Giga touch library (arduino-libraries/Arduino_GigaDisplayTouch)
 
 Works in progress:
 - keyboard
