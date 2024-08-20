@@ -58,6 +58,9 @@ public:
 
   // Set the text label of the button
   void setText(char *label);
+  // Single character version
+  void setText(char ch)
+       { char text[2] = {ch, 0}; setText(text); }
 
   // Set the colors used by a button
   void setColor(uint16_t outline, uint16_t fill, uint16_t textcolor);
@@ -137,6 +140,9 @@ public:
 
   // Set up a menu item at the given index (zero based) within the menu.
   void setMenuItem(int indx, char *itemText, bool enabled = true, bool checked = false);
+  // Single character version
+  void setMenuItem(int indx, char ch, bool enabled = true, bool checked = false)
+                { char item[2] = {ch, 0}; setMenuItem(indx, item, enabled, checked); }
 
   // Disable/enable a menu item.
   void enableMenuItem(int indx, bool enabled);
