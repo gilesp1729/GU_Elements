@@ -85,11 +85,16 @@ void setup()
   // Set up buttons. button 2 has no callback passed here, as the associated menu
   // will provide one internally.
   button1.initButtonUL(240, 5, 150, 45, BLACK, YELLOW, BLACK, "Button", tsize, tap_cb, 2, NULL);
-  button2.initButtonUL(480, 5, 150, 45, WHITE, DKGREY, WHITE, "Menu", tsize);
 
-  // Set up the menu and its items.
+  // Uncomment the second line to put the button at the bottom of the screen
+  // so its menu goes up instead of down.
+  button2.initButtonUL(480, 5, 150, 45, WHITE, DKGREY, WHITE, "Menu", tsize);
+  //button2.initButtonUL(480, 430, 150, 45, WHITE, DKGREY, WHITE, "Menu", tsize);
+
+  // Set up the menu and its items. Uncomment the second line for black text on white.
   menu.initMenu(&button2, WHITE, DKGREY, GREY, WHITE, menu_cb, 3, NULL);
-  //menu.initMenu(&button2, WHITE, WHITE, GREY, BLACK, menu_cb, 3, NULL);   // black text on white
+  //menu.initMenu(&button2, WHITE, WHITE, GREY, BLACK, menu_cb, 3, NULL);
+  
   menu.setMenuItem(0, items[0]);
   menu.setMenuItem(1, items[1], false);  // Disable this item
   menu.setMenuItem(2, items[2], true, true);  // Check mark this item

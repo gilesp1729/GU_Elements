@@ -68,8 +68,10 @@ void setup()
   detector.setRotation(1);
 
   // Set up buttons. button 2 has no callback passed here, as the associated menu
-  // will provide one internally.
+  // will provide one internally. Uncomment the second line to put the button
+  // at the bottom.
   button2.initButtonUL(480, 5, 200, 45, WHITE, DKGREY, WHITE, "Long Menu", tsize);
+  //button2.initButtonUL(480, 430, 200, 45, WHITE, DKGREY, WHITE, "Long Menu", tsize);
 
   // Set up the menu and its items.
   menu.initMenu(&button2, WHITE, DKGREY, GREY, WHITE, menu_cb, 3, NULL);

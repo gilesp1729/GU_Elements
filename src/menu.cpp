@@ -19,7 +19,7 @@ void GU_Menu::initMenu(GU_Button *button,
   _w = 0;             // will be accumulated from menu items
   _h = 0;
   _x1 = _button->_x1; // may change if too close to edge of screen
-  _y1 = _button->_y1 + _button->_h;
+  _y1 = _button->_y1 + _button->_h;   // may change if button is at bottom
   _n_items = 0;
   _n_displayed = 0;
   _first_displayed = 0;
@@ -31,7 +31,12 @@ void GU_Menu::initMenu(GU_Button *button,
   // crowding based on the font.
   _fc->getTextBounds("M", 0, 0, &x, &y, &_em_width, &_em_height, _textsize);
   _itemheight = max(_button->_h, 2 * _em_height);
-  _max_displayed = (_gfx->height() - _y1) / _itemheight;
+
+  // Take account of buttons near the bottom
+  if (_button->_y1 > _gfx->height() / 2)
+    _max_displayed = _button->_y1 / _itemheight;
+  else
+    _max_displayed = (_gfx->height() - _y1) / _itemheight;
 }
 
 // Set up a menu item at the given index (zero based) within the menu.
@@ -65,9 +70,21 @@ void GU_Menu::setMenuItem(int indx, char *itemText, bool enabled, bool checked)
       _x1 = _gfx->width() - _w - 1;   // push it back onto the screen
   }
 
-  h = (indx + 1) * _itemheight;
+  // Accumulate the total height of the displayed menu.
+  h = _n_displayed * _itemheight;
   if (h > _h)
+  {
     _h = h;
+
+    // If the button is nearer the bottom of the screen, then the menu
+    // goes up rather than down.
+    if (_button->_y1 > _gfx->height() / 2)
+    {
+      _y1 = _button->_y1 - h;
+      if (_y1 < 0)
+        _y1 = 0;
+    }
+  }
 
 #if 0
   Serial.print("SetMenuItem: xywh ");
