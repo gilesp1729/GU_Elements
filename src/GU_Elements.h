@@ -139,10 +139,10 @@ public:
   void destroyMenu(void);
 
   // Set up a menu item at the given index (zero based) within the menu.
-  void setMenuItem(int indx, char *itemText, bool enabled = true, bool checked = false);
+  void setMenuItem(int indx, char *text, bool enabled = true, bool checked = false, bool underlined = false);
   // Single character version
-  void setMenuItem(int indx, char ch, bool enabled = true, bool checked = false)
-                { char item[2] = {ch, 0}; setMenuItem(indx, item, enabled, checked); }
+  void setMenuItem(int indx, char ch, bool enabled = true, bool checked = false, bool underlined = false)
+                { char item[2] = {ch, 0}; setMenuItem(indx, item, enabled, checked, underlined); }
 
   // Disable/enable a menu item.
   void enableMenuItem(int indx, bool enabled);
@@ -158,8 +158,9 @@ private:
   {
     char      label[20];       // String to display on menu item
     uint16_t  itemwidth;       // Width from getTextBounds
-    bool      checked;         // Whether checked or enabled/disables
+    bool      checked;         // Whether checked or enabled/disabled
     bool      enabled;
+    bool      underlined;      // Whether item is drawn with a line
   } GU_MenuItem;
 
   Adafruit_GFX *_gfx;

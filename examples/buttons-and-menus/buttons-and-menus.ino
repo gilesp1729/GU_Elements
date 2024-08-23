@@ -95,7 +95,7 @@ void setup()
   menu.initMenu(&button2, WHITE, DKGREY, GREY, WHITE, menu_cb, 3, NULL);
   //menu.initMenu(&button2, WHITE, WHITE, GREY, BLACK, menu_cb, 3, NULL);
   
-  menu.setMenuItem(0, items[0]);
+  menu.setMenuItem(0, items[0], true, false, true); // underline this item
   menu.setMenuItem(1, items[1], false);  // Disable this item
   menu.setMenuItem(2, items[2], true, true);  // Check mark this item
 

@@ -40,7 +40,7 @@ void GU_Menu::initMenu(GU_Button *button,
 }
 
 // Set up a menu item at the given index (zero based) within the menu.
-void GU_Menu::setMenuItem(int indx, char *itemText, bool enabled, bool checked)
+void GU_Menu::setMenuItem(int indx, char *text, bool enabled, bool checked, bool underlined)
 {
   int16_t x, y;
   uint16_t w, h;
@@ -55,7 +55,8 @@ void GU_Menu::setMenuItem(int indx, char *itemText, bool enabled, bool checked)
 
   _items[indx].enabled = enabled;
   _items[indx].checked = checked;
-  strncpy(_items[indx].label, itemText, 19);
+  _items[indx].underlined = underlined;
+  strncpy(_items[indx].label, text, 19);
   _items[indx].label[19] = 0;
 
   // Accumulate the item into the menu area bounds.
@@ -134,6 +135,11 @@ void GU_Menu::drawMenu(int highlight_item)
       _gfx->fillRect(_x1, item_y1, _w, _itemheight, _highlightcolor);
     else
       _gfx->fillRect(_x1, item_y1, _w, _itemheight, _fillcolor);
+
+    if (_items[i].underlined)
+      _gfx->drawLine(_x1, item_y1 + _itemheight - 1,
+                    _x1 + _w - 1, item_y1 + _itemheight - 1,
+                    _outlinecolor);
 
     if (_items[i].enabled)
       color = _textcolor;
