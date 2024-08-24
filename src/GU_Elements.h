@@ -150,8 +150,11 @@ public:
   // Set the checkbox in a menu item.
   void checkMenuItem(int indx, bool checked);
 
-  // Ae we displaying a menu? (any menu, not just this instance)
+  // Are we displaying a menu? (any menu, not just this instance)
   bool isAnyMenuDisplayed(void) { return _gd->isEventRegistered(MAX_EVENTS - 4); }
+
+  // Set an optional menu tip (help text) to be displayed when menu is drawn.
+  void setTip(char *tip);
 
 private:
   typedef struct GU_MenuItem
@@ -177,6 +180,7 @@ private:
   int _n_displayed;     // number actually displayed (if there isn't room for all of them)
   int _first_displayed; // index of top displayed item in menu
   int _max_displayed;    // the max number of items that can be displayed within screen height
+  char _tip[80];        // Menu tip (help text)
   TapCB _callback;
   int _indx;
   void *_param;

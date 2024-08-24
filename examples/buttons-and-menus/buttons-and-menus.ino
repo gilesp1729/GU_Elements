@@ -99,6 +99,9 @@ void setup()
   menu.setMenuItem(1, items[1], false);  // Disable this item
   menu.setMenuItem(2, items[2], true, true);  // Check mark this item
 
+  // A help tip
+  menu.setTip("Select something from the menu");
+
   // Clear the screen and draw the buttons
   refresh();
 }

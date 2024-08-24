@@ -78,7 +78,7 @@ void setup()
   //menu.initMenu(&button2, WHITE, WHITE, GREY, BLACK, menu_cb, 3, NULL);   // black text on white
   menu.setMenuItem(0, items[0]);
   menu.setMenuItem(1, items[1], false);  // Disable this item
-  menu.setMenuItem(2, items[2], true, true);  // Check mark this item
+  menu.setMenuItem(2, items[2], true, true, true);  // Check mark and underline this item
   menu.setMenuItem(3, items[3]);
   menu.setMenuItem(4, items[4]);
   menu.setMenuItem(5, items[5]);
@@ -86,6 +86,9 @@ void setup()
   menu.setMenuItem(7, items[7]);
   menu.setMenuItem(8, items[8]);
   menu.setMenuItem(9, items[9]);
+
+  // A help tip
+  menu.setTip("This is a long (scrolling) menu");
 
   // Clear the screen and draw the buttons
   refresh();

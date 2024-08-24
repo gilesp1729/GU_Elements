@@ -23,6 +23,7 @@ void GU_Menu::initMenu(GU_Button *button,
   _n_items = 0;
   _n_displayed = 0;
   _first_displayed = 0;
+  _tip[0] = '\0';
   _callback = callback;
   _indx = indx;
   _param = param;
@@ -121,6 +122,13 @@ void GU_Menu::checkMenuItem(int indx, bool checked)
   _items[indx].checked = checked;
 }
 
+// Store the menu tip.
+void GU_Menu::setTip(char *tip)
+{
+  strncpy(_tip, tip, 79);
+  _tip[79] = 0; // strncpy does not place a null at the end.
+}
+
 // Draw the menu with (optionally) one item highlighted.
 void GU_Menu::drawMenu(int highlight_item)
 {
@@ -184,7 +192,15 @@ void GU_Menu::drawMenu(int highlight_item)
 
     item_y1 += _itemheight;
   }
+
+  // Outline the menu area and draw the optional tip in the highlight color.
   _gfx->drawRect(_x1, _y1, _w, _h, _outlinecolor);
+  if (_tip[0] != '\0')
+  {
+    _gfx->fillRect(0, _button->_y1, _gfx->width(), _button->_h, _highlightcolor);
+    _fc->getTextBounds(_tip, 0, _button->_y1, &x, &y, &w, &h, _textsize);
+    _fc->drawText(_tip, _gfx->width() / 2 - w / 2, _button->_y1 + h, _textcolor, _textsize);
+  }
 }
 
 // Redraw the menu if the highlight has changed.
